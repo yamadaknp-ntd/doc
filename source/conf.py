@@ -17,9 +17,12 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'test'
+project = 'test_sphinx'
 copyright = '2020, yamadaknp'
 author = 'yamadaknp'
+
+# The full version, including alpha/beta/rc tags
+release = '0.1-SNAPSHOT'
 
 
 # -- General configuration ---------------------------------------------------
@@ -28,7 +31,7 @@ author = 'yamadaknp'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-        "sphinx_rtd_theme"
+  "sphinx_rtd_theme"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -39,7 +42,7 @@ templates_path = ['_templates']
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'jp'
+language = 'ja'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
