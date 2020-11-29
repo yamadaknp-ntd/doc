@@ -42,7 +42,7 @@ RDS構築
    
    .. _Trello: https://trello.com/c/4Hjrr2YM/1-aws-%E7%92%B0%E5%A2%83%E3%83%BB%E9%96%8B%E7%99%BA%E3%83%A6%E3%83%BC%E3%82%B6
 
-   .. code-block:: conf
+   .. code-block:: properties
 
       [default]
       aws_access_key_id=XXXXXXXXXXXXXXXX
@@ -96,12 +96,132 @@ RDS構築
 
 #. 結果
 
+   Boot Application をローカル実行したら、RDS内のテーブルが更新された。
+
    .. image:: images/usr.png
    .. image:: images/grp.png
    .. image:: images/membership.png
    .. image:: images/address.png
    .. image:: images/email.png
 
-AWSで実践! 基盤構築・デプロイ自動化
+AWS CloudFormationを使用した基盤自動化
 ---------------------------------------
 
+AWS CLIの実行環境／AWS認証情報の設定
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. aws-cli
+
+   .. code-block:: bash
+
+      pip3 install boto3 --upgrade --user # 先にこっちじゃないとエラーでた
+      pip3 install awscli --upgrade --user
+
+      # 確認
+      aws --version
+      aws-cli/1.18.147 Python/2.7.18 Linux/4.14.203-156.332.amzn2.x86_64 botocore/1.18.6
+
+      aws s3 ls
+      2020-04-10 02:50:27 ma-mattermost-bucket
+      # omit
+
+
+各種検証プラグインインストールと統合開発環境の設定
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. cfn-lint
+
+   #. command
+
+      .. code-block:: bash
+
+         pip3 install cfn-lint
+
+   #. IntelliJ IDEA Plugin
+
+      * cfn-lint # インストールされてた
+      * AWS CloudFormation # インストールされてた
+
+CloudFormationテスト環境の構築
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. taskcatインストール
+
+   #. command
+   
+      .. code-block:: bash
+
+         pip3 install taskcat --user
+         taskcat --version
+         _            _             _   
+         | |_ __ _ ___| | _____ __ _| |_ 
+         | __/ _` / __| |/ / __/ _` | __|
+         | || (_| \__ \   < (_| (_| | |_ 
+         \__\__,_|___/_|\_\___\__,_|\__|
+                                       
+
+
+         version 0.9.20
+         0.9.20
+
+#. テスト
+
+   #. cfn-test.yml
+
+      .. code-block:: yaml
+
+         AWSTemplateFormatVersion: '2010-09-09'
+
+         Description: Sample CloudFormation template with YAML - VPC
+
+         Parameters:
+         VPCName:
+            Description: Target VPC Stack Name
+            Type: String
+            MinLength: 1
+            MaxLength: 255
+            AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+            Default: mynavi-sample-cloudformation-vpc
+         VPCCiderBlock:
+            Description: CiderBlock paramater for VPC
+            Type: String
+            MinLength: 9
+            MaxLength: 18
+            AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+            Default: 172.0.0.0/16
+
+         Resources:
+         VPC:
+            Type: AWS::EC2::VPC
+            Properties:
+               CidrBlock: !Sub ${VPCCiderBlock}
+               InstanceTenancy: default
+               EnableDnsSupport: true
+               EnableDnsHostnames: true
+               Tags:
+               - Key: Name
+                  Value: !Sub ${VPCName}
+
+         Outputs:
+         VPCID:
+            Description: VPC ID
+            Value: !Ref VPC
+            Export:
+               Name: !Sub ${AWS::StackName}-VPCID
+
+   #. .taskcat.yml
+
+      .. code-block:: yaml
+
+         project:                         
+         name: sample-aws-cloudformation  
+         regions:
+            - us-west-1              
+         tests:                       
+         vpc-test:                  
+            template: ./test-cfn.yaml
+
+#. 結果
+
+   .. image:: images/taskcat.png
+   .. image:: images/taskcat_result.png

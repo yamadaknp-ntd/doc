@@ -90,7 +90,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#id2">1.1.2. アプリケーション構築</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#aws">1.2. AWSで実践! 基盤構築・デプロイ自動化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aws-cloudformation">1.2. AWS CloudFormationを使用した基盤自動化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aws-cli-aws">1.2.1. AWS CLIの実行環境／AWS認証情報の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">1.2.2. 各種検証プラグインインストールと統合開発環境の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cloudformation">1.2.3. CloudFormationテスト環境の構築</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -218,7 +223,7 @@ psql -U username -d sample_database -h xxxxxxx.ap-northeast-1.rds.amazonaws.com
 <ol class="arabic simple">
 <li><p>credential設定(<a class="reference external" href="https://trello.com/c/4Hjrr2YM/1-aws-%E7%92%B0%E5%A2%83%E3%83%BB%E9%96%8B%E7%99%BA%E3%83%A6%E3%83%BC%E3%82%B6">Trello</a>)</p></li>
 </ol>
-<div class="highlight-conf notranslate"><div class="highlight"><pre><span></span>[default]
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span>[default]
 aws_access_key_id=XXXXXXXXXXXXXXXX
 aws_secret_access_key=YYYYYYYYYYYYYYYYYYYYYYYYYYYYY
 </pre></div>
@@ -270,6 +275,7 @@ end note"/>
 </p>
 </li>
 <li><p>結果</p>
+<p>Boot Application をローカル実行したら、RDS内のテーブルが更新された。</p>
 <img alt="../../_images/usr.png" src="../../_images/usr.png" />
 <img alt="../../_images/grp.png" src="../../_images/grp.png" />
 <img alt="../../_images/membership.png" src="../../_images/membership.png" />
@@ -279,8 +285,133 @@ end note"/>
 </ol>
 </div>
 </div>
-<div class="section" id="aws">
-<h2><span class="section-number">1.2. </span>AWSで実践! 基盤構築・デプロイ自動化<a class="headerlink" href="#aws" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="aws-cloudformation">
+<h2><span class="section-number">1.2. </span>AWS CloudFormationを使用した基盤自動化<a class="headerlink" href="#aws-cloudformation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="aws-cli-aws">
+<h3><span class="section-number">1.2.1. </span>AWS CLIの実行環境／AWS認証情報の設定<a class="headerlink" href="#aws-cli-aws" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>aws-cli</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install boto3 --upgrade --user <span class="c1"># 先にこっちじゃないとエラーでた</span>
+pip3 install awscli --upgrade --user
+
+<span class="c1"># 確認</span>
+aws --version
+aws-cli/1.18.147 Python/2.7.18 Linux/4.14.203-156.332.amzn2.x86_64 botocore/1.18.6
+
+aws s3 ls
+<span class="m">2020</span>-04-10 <span class="m">02</span>:50:27 ma-mattermost-bucket
+<span class="c1"># omit</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">1.2.2. </span>各種検証プラグインインストールと統合開発環境の設定<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>cfn-lint</p>
+<ol class="arabic">
+<li><p>command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install cfn-lint
+</pre></div>
+</div>
+</li>
+<li><p>IntelliJ IDEA Plugin</p>
+<ul class="simple">
+<li><p>cfn-lint # インストールされてた</p></li>
+<li><p>AWS CloudFormation # インストールされてた</p></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="cloudformation">
+<h3><span class="section-number">1.2.3. </span>CloudFormationテスト環境の構築<a class="headerlink" href="#cloudformation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>taskcatインストール</p>
+<ol class="arabic">
+<li><p>command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install taskcat --user
+taskcat --version
+_            _             _
+<span class="p">|</span> <span class="p">|</span>_ __ _ ___<span class="p">|</span> <span class="p">|</span> _____ __ _<span class="p">|</span> <span class="p">|</span>_
+<span class="p">|</span> __/ _<span class="sb">`</span> / __<span class="p">|</span> <span class="p">|</span>/ / __/ _<span class="sb">`</span> <span class="p">|</span> __<span class="p">|</span>
+<span class="p">|</span> <span class="o">||</span> <span class="o">(</span>_<span class="p">|</span> <span class="se">\_</span>_ <span class="se">\ </span>  &lt; <span class="o">(</span>_<span class="p">|</span> <span class="o">(</span>_<span class="p">|</span> <span class="p">|</span> <span class="p">|</span>_
+<span class="se">\_</span>_<span class="se">\_</span>_,_<span class="p">|</span>___/_<span class="p">|</span><span class="se">\_\_</span>__<span class="se">\_</span>_,_<span class="p">|</span><span class="se">\_</span>_<span class="p">|</span>
+
+
+
+version <span class="m">0</span>.9.20
+<span class="m">0</span>.9.20
+</pre></div>
+</div>
+</li>
+</ol>
+</li>
+<li><p>テスト</p>
+<ol class="arabic">
+<li><p>cfn-test.yml</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">AWSTemplateFormatVersion</span><span class="p">:</span> <span class="s">&#39;2010-09-09&#39;</span>
+
+<span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Sample CloudFormation template with YAML - VPC</span>
+
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="nt">VPCName</span><span class="p">:</span>
+   <span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Target VPC Stack Name</span>
+   <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">String</span>
+   <span class="nt">MinLength</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+   <span class="nt">MaxLength</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">255</span>
+   <span class="nt">AllowedPattern</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">^[a-zA-Z][-a-zA-Z0-9]*$</span>
+   <span class="nt">Default</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mynavi-sample-cloudformation-vpc</span>
+<span class="nt">VPCCiderBlock</span><span class="p">:</span>
+   <span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CiderBlock paramater for VPC</span>
+   <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">String</span>
+   <span class="nt">MinLength</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">9</span>
+   <span class="nt">MaxLength</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">18</span>
+   <span class="nt">AllowedPattern</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})</span>
+   <span class="nt">Default</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">172.0.0.0/16</span>
+
+<span class="nt">Resources</span><span class="p">:</span>
+<span class="nt">VPC</span><span class="p">:</span>
+   <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS::EC2::VPC</span>
+   <span class="nt">Properties</span><span class="p">:</span>
+      <span class="nt">CidrBlock</span><span class="p">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${VPCCiderBlock}</span>
+      <span class="nt">InstanceTenancy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+      <span class="nt">EnableDnsSupport</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+      <span class="nt">EnableDnsHostnames</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+      <span class="nt">Tags</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">Key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Name</span>
+         <span class="l l-Scalar l-Scalar-Plain">Value</span><span class="p p-Indicator">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${VPCName}</span>
+
+<span class="nt">Outputs</span><span class="p">:</span>
+<span class="nt">VPCID</span><span class="p">:</span>
+   <span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VPC ID</span>
+   <span class="nt">Value</span><span class="p">:</span> <span class="kt">!Ref</span> <span class="l l-Scalar l-Scalar-Plain">VPC</span>
+   <span class="nt">Export</span><span class="p">:</span>
+      <span class="nt">Name</span><span class="p">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${AWS::StackName}-VPCID</span>
+</pre></div>
+</div>
+</li>
+<li><p>.taskcat.yml</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">project</span><span class="p">:</span>
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-aws-cloudformation</span>
+<span class="nt">regions</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">us-west-1</span>
+<span class="nt">tests</span><span class="p">:</span>
+<span class="nt">vpc-test</span><span class="p">:</span>
+   <span class="nt">template</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./test-cfn.yaml</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</li>
+<li><p>結果</p>
+<img alt="../../_images/taskcat.png" src="../../_images/taskcat.png" />
+<img alt="../../_images/taskcat_result.png" src="../../_images/taskcat_result.png" />
+</li>
+</ol>
+</div>
 </div>
 </div>
 
