@@ -1,0 +1,71 @@
+20201130
+=======================================
+
+Amazon RDSにアクセスするSpringアプリケーション
+---------------------------------------
+
+
+RDS構築
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. 設定
+
+   .. image:: ../images/aws_rds_sample_arch.png
+
+   .. csv-table::
+      :header: "項目", "設定値", "備考"
+
+      "VPC", "ma-common-vpc", "workspacesのlocal applicationから接続するため"
+      "Subnet Group", "ma-yamada-database-1", "| 2つ以上の別AZのPrivate Subnetを指定
+      既存の共用サブネットを借用"
+      "セキュリティグループ", "MA-yamada-rds-sg2", "WorkSpacesのSGからのインバウンド(5432ポート)のみ許可"
+
+#. DBテーブル構築
+
+   #. psqlインストール
+
+   .. code-block:: bash
+
+      sudo yum update -y
+      sudo yum install -y postgresql
+      psql -U username -d sample_database -h xxxxxxx.ap-northeast-1.rds.amazonaws.com
+      postgres=> \i sample_database.sql
+
+#. AWS認証設定
+
+   #. credential設定(Trello_) 
+   
+   .. _Trello: https://trello.com/c/4Hjrr2YM/1-aws-%E7%92%B0%E5%A2%83%E3%83%BB%E9%96%8B%E7%99%BA%E3%83%A6%E3%83%BC%E3%82%B6
+
+   .. code-block:: conf
+
+      [default]
+      aws_access_key_id=XXXXXXXXXXXXXXXX
+      aws_secret_access_key=YYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+
+アプリケーション構築
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. コード
+
+   割愛 ※参考_
+
+   .. _参考: https://github.com/debugroom/mynavi-sample-aws-rds
+
+#. フロー
+
+.. uml::
+
+   participant SampleService as s
+   participant UsrRepository as uR
+   participant GroupRepository as gR
+
+   App -> s : setData()
+   s -> uR : groupRepository()
+   s -> gR : groupRepository()
+
+#. 結果
+
+AWSで実践! 基盤構築・デプロイ自動化
+---------------------------------------
+

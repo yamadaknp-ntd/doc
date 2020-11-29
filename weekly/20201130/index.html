@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. 20201130 &mdash; test_sphinx 0.1-SNAPSHOT ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="prev" title="技統本塾活動メモ" href="../../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> test_sphinx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. 20201130</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#amazon-rdsspring">1.1. Amazon RDSにアクセスするSpringアプリケーション</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rds">1.1.1. RDS構築</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">1.1.2. アプリケーション構築</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#aws">1.2. AWSで実践! 基盤構築・デプロイ自動化</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">test_sphinx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">1. </span>20201130</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/weekly/20201130/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">1. </span>20201130<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="amazon-rdsspring">
+<h2><span class="section-number">1.1. </span>Amazon RDSにアクセスするSpringアプリケーション<a class="headerlink" href="#amazon-rdsspring" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="rds">
+<h3><span class="section-number">1.1.1. </span>RDS構築<a class="headerlink" href="#rds" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>設定</p>
+<img alt="../../_images/aws_rds_sample_arch.png" src="../../_images/aws_rds_sample_arch.png" />
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>項目</p></th>
+<th class="head"><p>設定値</p></th>
+<th class="head"><p>備考</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>VPC</p></td>
+<td><p>ma-common-vpc</p></td>
+<td><p>workspacesのlocal applicationから接続するため</p></td>
+</tr>
+<tr class="row-odd"><td><p>Subnet Group</p></td>
+<td><p>ma-yamada-database-1</p></td>
+<td><div class="line-block">
+<div class="line">2つ以上の別AZのPrivate Subnetを指定</div>
+</div>
+<p>既存の共用サブネットを借用</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>セキュリティグループ</p></td>
+<td><p>MA-yamada-rds-sg2</p></td>
+<td><p>WorkSpacesのSGからのインバウンド(5432ポート)のみ許可</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>DBテーブル構築</p>
+<ol class="arabic simple">
+<li><p>psqlインストール</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo yum update -y
+sudo yum install -y postgresql
+psql -U username -d sample_database -h xxxxxxx.ap-northeast-1.rds.amazonaws.com
+<span class="nv">postgres</span><span class="o">=</span>&gt; <span class="se">\i</span> sample_database.sql
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>テーブル構成</p></li>
+</ol>
+<img alt="../../_images/aws_rds_sample_table.jpg" src="../../_images/aws_rds_sample_table.jpg" />
+</li>
+<li><p>AWS認証設定</p>
+<ol class="arabic simple">
+<li><p>credential設定(<a class="reference external" href="https://trello.com/c/4Hjrr2YM/1-aws-%E7%92%B0%E5%A2%83%E3%83%BB%E9%96%8B%E7%99%BA%E3%83%A6%E3%83%BC%E3%82%B6">Trello</a>)</p></li>
+</ol>
+<div class="highlight-conf notranslate"><div class="highlight"><pre><span></span>[default]
+aws_access_key_id=XXXXXXXXXXXXXXXX
+aws_secret_access_key=YYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h3><span class="section-number">1.1.2. </span>アプリケーション構築<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>コード</p>
+<div class="line-block">
+<div class="line">構築はほぼしてないので割愛 ※<a class="reference external" href="https://github.com/debugroom/mynavi-sample-aws-rds">参考</a></div>
+<div class="line">変更点はapplication.ymlのRDSのidentifer・パスワードくらい</div>
+</div>
+</li>
+<li><p>フロー</p>
+<p class="plantuml">
+<img src="../../_images/plantuml-c9e9d30e7577db0c8bb0648fa64d7142d2755cc5.png" alt="participant App as a
+participant SampleService as s
+participant UsrRepository as uR
+participant GroupRepository as gR
+
+a -&gt; s : setData()
+
+== init() ==
+
+s -&gt; uR : deleteAll()
+s -&gt; gR : deleteAll()
+
+== main ==
+
+s -&gt; gR : saveAll(Arrays.asList(new Group[]{group1, group2}));
+note right
+mynavi-group1
+mynavi-group2
+end note
+s -&gt; uR : saveAll(Arrays.asList(new User[]{user1, user2}));
+note right
+taro
+MAIL: [test&#64;test.com, test1&#64;test.com]
+ADDRESS: Tokyo Chiyodaku
+MEMBERSHIP: [mynavi-group1, mynavi-group2]
+hanako
+MAIL: [test2&#64;test.com, test3&#64;test.com]
+ADDRESS: Tokyo Chuoku
+MEMBERSHIP: [mynavi-group2]
+end note"/>
+</p>
+</li>
+<li><p>結果</p>
+<img alt="../../_images/usr.png" src="../../_images/usr.png" />
+<img alt="../../_images/grp.png" src="../../_images/grp.png" />
+<img alt="../../_images/membership.png" src="../../_images/membership.png" />
+<img alt="../../_images/address.png" src="../../_images/address.png" />
+<img alt="../../_images/email.png" src="../../_images/email.png" />
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="aws">
+<h2><span class="section-number">1.2. </span>AWSで実践! 基盤構築・デプロイ自動化<a class="headerlink" href="#aws" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../../index.html" class="btn btn-neutral float-left" title="技統本塾活動メモ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, yamadaknp
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
