@@ -1,5 +1,9 @@
+.. index:: 活動メモ; 20201130
+
 20201130
 =======================================
+
+.. index:: AWSで作るクラウドネイティブアプリケーションの基本; Amazon RDSにアクセスするSpringアプリケーション
 
 Amazon RDSにアクセスするSpringアプリケーション
 ----------------------------------------------
@@ -103,6 +107,8 @@ RDS構築
    .. image:: images/membership.png
    .. image:: images/address.png
    .. image:: images/email.png
+
+.. index:: AWSで実践! 基盤構築・デプロイ自動化; AWS CloudFormationを使用した基盤自動化
 
 AWS CloudFormationを使用した基盤自動化
 ---------------------------------------

@@ -12,7 +12,7 @@
    :numbered:
    :glob:
 
-   weekly/20201130/index
+   weekly/**
 
 
 Indices and tables
