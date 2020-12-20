@@ -1,0 +1,168 @@
+.. index:: 活動メモ; 20201214
+
+20201214
+=============================================
+
+.. index:: AWSで実践! 基盤構築・デプロイ自動化; パイプラインの構築
+
+パイプラインの構築（デプロイ編）
+---------------------------------------
+
+.. image:: images/pipeline.png
+
+
+基盤構築
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+自動化のためのCloudFormationテンプレート作成中  
+
+* テンプレートファイルの分割方法とか
+* 既存のリソース（VPCとかはすでにあるもの）を使う場合の書き方
+
+#. 基盤イメージ
+
+.. image:: images/infra.png
+
+
+#. テンプレート構成
+
+.. code-block::
+
+    templates
+      - vpc.yaml
+      - alb.yaml
+      - ecs.yaml
+
+#. vpc
+
+.. code-block:: yaml
+
+    AWSTemplateFormatVersion: '2010-09-09'
+
+    Parameters:
+    VPCName:
+        Description: Target VPC Stack Name
+        Type: String
+        MinLength: 1
+        MaxLength: 255
+        AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+        Default: mynavi-sample-cloudformation-vpc
+    VPCCiderBlock:
+        Description: CiderBlock paramater for VPC
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+        Default: 172.200.0.0/16
+    PublicSubnet1CiderBlock:
+        Description: CiderBlock paramater for VPC
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+        Default: 172.200.1.0/24
+    PrivateSubnet1CiderBlock:
+        Description: CiderBlock paramater for VPC
+        Type: String
+        MinLength: 9
+        MaxLength: 18
+        AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+        Default: 172.200.1.0/24
+
+    Resources:
+    VPC:
+        Type: AWS::EC2::VPC
+        DeletionPolicy: Retain
+        UpdateReplacePolicy: Retain
+        Properties:
+        CidrBlock: !Sub ${VPCCiderBlock}
+        InstanceTenancy: default
+        EnableDnsSupport: true
+        EnableDnsHostnames: true
+        Tags:
+            - Key: Name
+            Value: !Sub ${VPCName}
+
+    PublicSubnet1:
+        Type: AWS::EC2::Subnet
+        UpdateReplacePolicy: Retain
+        DeletionPolicy: Retain
+        Properties:
+        CidrBlock: !Sub ${PublicSubnet1CiderBlock}
+        VpcId: !Ref VPC
+        AvailabilityZone: !Select [ 0, !GetAZs '' ]
+        Tags:
+            - Key: Name
+            Value: !Sub ${VPCName}-PublicSubnet1
+        
+    PrivateSubnet1:
+        Type: AWS::EC2::Subnet
+        UpdateReplacePolicy: Retain
+        DeletionPolicy: Retain
+        Properties:
+        CidrBlock: !Sub ${PrivateSubnet1CiderBlock}
+        VpcId: !Ref VPC
+        AvailabilityZone: !Select [ 0, !GetAZs '' ]
+        Tags:
+            - Key: Name
+            Value: !Sub ${VPCName}-PrivateSubnet1
+
+    Outputs:
+    VPC:
+        Description: VPC ID
+        Value: !Ref VPC
+        Export:
+        Name: !Sub ${VPCName}-VPCID
+
+    PublicSubnet1:
+        Description: PublicSubnet1
+        Value: !Ref PublicSubnet1
+        Export:
+        Name: !Sub ${VPCName}-PublicSubnet1
+
+    PrivateSubnet1:
+        Description: PrivateSubnet1
+        Value: !Ref PrivateSubnet1
+        Export:
+        Name: !Sub ${VPCName}-PrivateSubnet1
+
+    PublicSubnet1Arn:
+        Description: PublicSubnet1Arn
+        Value: !Sub
+        - arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PublicSubnet1}
+        - PublicSubnet1: !Ref PublicSubnet1
+        Export:
+        Name: !Sub ${VPCName}-PublicSubnet1Arn
+
+    PrivateSubnet1Arn:
+        Description: PrivateSubnet1Arn
+        Value: !Sub
+        - arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${PrivateSubnet1}
+        - PrivateSubnet1: !Ref PrivateSubnet1
+        Export:
+        Name: !Sub ${VPCName}-PrivateSubnet1Arn
+
+
+
+アプリケーション
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+塾長のサンプルアプリを拝借
+https://github.com/debugroom/mynavi-sample-continuous-integration/tree/develop
+
+
+buildspec.yml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+未実施
+
+パラメータストア
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+未実施
+
+
+実行結果
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+未実施
