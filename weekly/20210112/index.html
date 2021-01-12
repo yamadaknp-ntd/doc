@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. 20210112 &mdash; 技統本塾活動メモ 0.1-SNAPSHOT ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <link rel="prev" title="3. 20201214" href="../20201214/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> 技統本塾活動メモ
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../20201130/index.html">1. 20201130</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../20201207/index.html">2. 20201207</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../20201214/index.html">3. 20201214</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. 20210112</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#index-1">4.1. パイプラインの構築（ビルド編）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dockerhub-ecr">4.1.1. DockerHub -&gt; ECR</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">4.2. パイプラインの構築（デプロイ編）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">4.2.1. 基盤構築</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">4.2.2. アプリケーション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#buildspec-yml">4.2.3. buildspec.yml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">技統本塾活動メモ</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">4. </span>20210112</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/weekly/20210112/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="index-0">
+<span id="id1"></span><h1><span class="section-number">4. </span>20210112<a class="headerlink" href="#index-0" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="index-1">
+<span id="id2"></span><h2><span class="section-number">4.1. </span>パイプラインの構築（ビルド編）<a class="headerlink" href="#index-1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="dockerhub-ecr">
+<h3><span class="section-number">4.1.1. </span>DockerHub -&gt; ECR<a class="headerlink" href="#dockerhub-ecr" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><p>Docker Hubのイメージダウンロードの流量制限が始まったので変更してみた</p>
+</div></blockquote>
+<ol class="arabic">
+<li><p>ECR Public リポジトリ作成</p>
+<blockquote>
+<div><p>Amazon ECR Public Galleryから誰でもダウンロード可能</p>
+<p><a class="reference external" href="https://gallery.ecr.aws/?searchTerm=mynavi">https://gallery.ecr.aws/?searchTerm=mynavi</a></p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ECR Publicの利用料金は、ストレージが50GBまで毎月無料</p>
+<p>アノニマスユーザーは毎月500GBまでの帯域が無料で利用可能。AWSアカウントで認証すると毎月5TBまで無料で利用可能。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>buildspec.yamlの修正</p></li>
+<li><p>ecr-publicのフルアクセス権限を追加</p>
+<blockquote>
+<div><p>Publicと言いつつも、CodePipelineからだとAccessPolicyで制御される模様</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>ecrのアクセスポリシーではなく、ecr-publicのポリシーをアタッチ</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">4.2. </span>パイプラインの構築（デプロイ編）<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<img alt="../../_images/pipeline2.png" src="../../_images/pipeline2.png" />
+<div class="section" id="id4">
+<h3><span class="section-number">4.2.1. </span>基盤構築<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>自動化のためのCloudFormationテンプレート作成</p>
+<ul class="simple">
+<li><p>テンプレートファイルの分割方法とか</p></li>
+<li><p>既存のリソース（VPCとかはすでにあるもの）を使う場合の書き方</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>基盤イメージ</p></li>
+</ol>
+<img alt="../../_images/template.png" src="../../_images/template.png" />
+<ol class="arabic simple">
+<li><p>テンプレート構成</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">templates</span>
+  <span class="o">-</span> <span class="n">vpc</span>
+      <span class="o">-</span> <span class="n">vpc</span><span class="o">-</span><span class="n">launch</span><span class="o">.</span><span class="n">sh</span>       <span class="c1"># 起動スクリプト</span>
+      <span class="o">-</span> <span class="n">vpc</span><span class="o">-</span><span class="n">parameters</span><span class="o">.</span><span class="n">json</span> <span class="c1"># テンプレートで使用するパラメータの設定</span>
+      <span class="o">-</span> <span class="n">vpc</span><span class="o">.</span><span class="n">yaml</span>            <span class="c1"># CFN Templateファイル</span>
+  <span class="o">-</span> <span class="n">alb</span>
+    <span class="o">-</span> <span class="n">alb</span><span class="o">-</span><span class="n">launch</span><span class="o">.</span><span class="n">sh</span>
+    <span class="o">-</span> <span class="n">alb</span><span class="o">-</span><span class="n">parameters</span><span class="o">.</span><span class="n">json</span>
+    <span class="o">-</span> <span class="n">alb</span><span class="o">.</span><span class="n">yaml</span>
+  <span class="o">-</span> <span class="n">ecs</span>
+    <span class="o">-</span> <span class="n">ecs</span><span class="o">-</span><span class="n">launch</span><span class="o">.</span><span class="n">sh</span>
+    <span class="o">-</span> <span class="n">ecs</span><span class="o">-</span><span class="n">parameters</span><span class="o">.</span><span class="n">json</span>
+    <span class="o">-</span> <span class="n">ecs</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>vpcのソース紹介</p></li>
+</ol>
+<ul>
+<li><p>vpc.yaml</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">AWSTemplateFormatVersion</span><span class="p">:</span> <span class="s">&#39;2010-09-09&#39;</span>
+
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="nt">VPCId</span><span class="p">:</span>
+    <span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Target VPC Id</span>
+    <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="nt">VPCName</span><span class="p">:</span>
+<span class="nt">VPCCiderBlock</span><span class="p">:</span>
+<span class="nt">PublicSubnet1CiderBlock</span><span class="p">:</span>
+<span class="nt">PublicSubnet1Name</span><span class="p">:</span>
+<span class="nt">PublicSubnet2CiderBlock</span><span class="p">:</span>
+<span class="nt">PublicSubnet2Name</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1CiderBlock</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1Name</span><span class="p">:</span>
+<span class="nt">PrivateSubnet2CiderBlock</span><span class="p">:</span>
+<span class="nt">PrivateSubnet2Name</span><span class="p">:</span>
+
+<span class="nt">Resources</span><span class="p">:</span>
+<span class="nt">VPC</span><span class="p">:</span>
+    <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS::EC2::VPC</span>
+    <span class="nt">DeletionPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Retain</span>
+    <span class="nt">UpdateReplacePolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Retain</span>
+    <span class="nt">Properties</span><span class="p">:</span>
+    <span class="nt">CidrBlock</span><span class="p">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${VPCCiderBlock}</span>
+    <span class="nt">InstanceTenancy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">EnableDnsSupport</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">EnableDnsHostnames</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">Tags</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="nt">Key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Name</span>
+        <span class="nt">Value</span><span class="p">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${VPCName}</span>
+<span class="nt">PublicSubnet1</span><span class="p">:</span>
+<span class="nt">PublicSubnet2</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1</span><span class="p">:</span>
+<span class="nt">PrivateSubnet2</span><span class="p">:</span>
+
+<span class="nt">Outputs</span><span class="p">:</span>
+<span class="nt">VPC</span><span class="p">:</span>
+<span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VPC ID</span>
+<span class="nt">Value</span><span class="p">:</span> <span class="kt">!Ref</span> <span class="l l-Scalar l-Scalar-Plain">VPC</span>
+<span class="nt">Export</span><span class="p">:</span>
+    <span class="nt">Name</span><span class="p">:</span> <span class="kt">!Sub</span> <span class="l l-Scalar l-Scalar-Plain">${VPCName}-VPCID</span>
+<span class="nt">PublicSubnet1</span><span class="p">:</span>
+<span class="nt">PublicSubnet1Arn</span><span class="p">:</span>
+<span class="nt">PublicSubnet2</span><span class="p">:</span>
+<span class="nt">PublicSubnet2Arn</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1Arn</span><span class="p">:</span>
+<span class="nt">PrivateSubnet2</span><span class="p">:</span>
+<span class="nt">PrivateSubnet1Arn</span><span class="p">:</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>vpc-parameters.json</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">[</span>
+    <span class="s">&quot;VPCName=ma-personal-vpc&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;VPCCiderBlock=10.2.0.0/16&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PublicSubnet1Name=MA-yamada-vpc-public-subnet-1&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PublicSubnet1CiderBlock=10.2.12.0/28&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PublicSubnet2Name=MA-yamada-vpc-public-subnet-2&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PublicSubnet2CiderBlock=10.2.12.16/28&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PrivateSubnet1Name=MA-yamada-vpc-private-subnet-1&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PrivateSubnet1CiderBlock=10.2.12.32/28&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PrivateSubnet2Name=MA-yamada-vpc-private-subnet-2&quot;</span><span class="p p-Indicator">,</span>
+    <span class="s">&quot;PrivateSubnet2CiderBlock=10.2.12.48/28&quot;</span>
+<span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>vpc-launch.sh</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+<span class="nv">stack_name</span><span class="o">=</span><span class="s2">&quot;MA-yamada-mynavi-sample-vpc&quot;</span>
+<span class="nv">template_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>dirname <span class="nv">$0</span><span class="k">)</span><span class="s2">/vpc.yaml&quot;</span>
+<span class="nv">parameters_file</span><span class="o">=</span><span class="k">$(</span>dirname <span class="nv">$0</span><span class="k">)</span>/vpc-parameters.json
+
+aws cloudformation deploy --stack-name <span class="si">${</span><span class="nv">stack_name</span><span class="si">}</span> --no-execute-changeset --template-file <span class="si">${</span><span class="nv">template_path</span><span class="si">}</span> --parameter-overrides <span class="s2">&quot;file://</span><span class="si">${</span><span class="nv">parameters_file</span><span class="si">}</span><span class="s2">&quot;</span> --capabilities CAPABILITY_IAM
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">4.2.2. </span>アプリケーション<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>塾長のサンプルアプリを拝借
+<a class="reference external" href="https://github.com/debugroom/mynavi-sample-continuous-integration/tree/develop">https://github.com/debugroom/mynavi-sample-continuous-integration/tree/develop</a></p>
+</div>
+<div class="section" id="buildspec-yml">
+<h3><span class="section-number">4.2.3. </span>buildspec.yml<a class="headerlink" href="#buildspec-yml" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>version: <span class="m">0</span>.2
+env:
+  parameter-store:
+    <span class="c1"># SONAR_HOST_URL: &quot;SONAR_HOST_URL&quot;</span>
+    <span class="c1"># SONAR_LOGIN: &quot;SONAR_LOGIN_BACKEND&quot;</span>
+    <span class="c1"># DOCKER_USER: &quot;MA_YAMADA_DOCKER_USER&quot;</span>
+    <span class="c1"># DOCKER_PASSWORD: &quot;MA_YAMADA_DOCKER_PASSWORD&quot;</span>
+    DOCKER_REPO : <span class="s2">&quot;MA_YAMADA_DOCKER_REPO&quot;</span>
+    IMAGE_REPO_NAME: <span class="s2">&quot;MA_YAMADA_BACKEND_IMAGE_REPO_NAME&quot;</span>
+    IMAGE_NAME: <span class="s2">&quot;MA_YAMADA_BACKEND_IMAGE_NAME&quot;</span>
+    IMAGE_TAG: <span class="s2">&quot;MA_YAMADA_BACKEND_IMAGE_TAG_STAGING&quot;</span>
+phases:
+<span class="c1"># install:</span>
+<span class="c1">#   runtime-versions:    # CodeBuildの Ubuntuランタイム 3.0 ~ 5.0 だと dockerランタイムサポートしてない</span>
+<span class="c1">#     docker: 18         # インストールしなくてもdocker標準インストールされてる模様</span>
+  pre_build:
+    commands:
+      - <span class="nb">echo</span> Logging in to Docker Hub...
+      - aws ecr-public get-login-password --region us-east-1 <span class="p">|</span> docker login --username AWS --password-stdin <span class="nv">$DOCKER_REPO</span>
+  build:
+    commands:
+      - <span class="nb">echo</span> Build started on <span class="sb">`</span>date<span class="sb">`</span>
+      - <span class="nb">echo</span> Building the Docker image...
+      - docker build -t <span class="nv">$IMAGE_NAME</span>:<span class="nv">$IMAGE_TAG</span> backend/build/production
+      - docker tag <span class="nv">$IMAGE_NAME</span>:<span class="nv">$IMAGE_TAG</span> <span class="nv">$IMAGE_REPO_NAME</span>:<span class="nv">$IMAGE_TAG</span>
+  post_build:
+    commands:
+      - <span class="nb">echo</span> Build completed on <span class="sb">`</span>date<span class="sb">`</span>
+      - <span class="nb">echo</span> Pushing the Docker image...
+      - docker push <span class="nv">$IMAGE_REPO_NAME</span>:<span class="nv">$IMAGE_TAG</span>
+      - <span class="nb">printf</span> <span class="s1">&#39;[{&quot;name&quot;:&quot;mynavi-sample-continuous-delivery-backend-staging&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]&#39;</span> <span class="nv">$IMAGE_REPO_NAME</span>:<span class="nv">$IMAGE_TAG</span> &gt; imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../20201214/index.html" class="btn btn-neutral float-left" title="3. 20201214" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, yamadaknp
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
