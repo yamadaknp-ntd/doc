@@ -1,0 +1,266 @@
+.. index:: 活動メモ; 20210118
+
+20210118
+=============================================
+
+.. index:: AWSで作るマイクロサービス!; 
+
+AWSで作るマイクロサービス!（アプリケーション実装）
+------------------------------------------------------------
+
+概要
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+WorkSpace内ローカル実行環境で、フロントエンド・バックエンド構成のアプリケーション実装を実施。
+
+
+* SpringSecurityを用いた、IDとパスワードを使った認証機能
+* Jpaを用いて、データベースに保存したユーザー情報を取得するバックエンドマイクロサービス
+* WebClientを用いて、フロントエンドからバックエンドサービスの呼び出し
+
+フロー
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#. ログイン
+
+.. uml::
+
+    participant user as u
+    box "frontend" #LightGreen
+      participant FrontendController as fc
+      participant DaoAuthenticationProvider as dap
+      participant OrchestrationService as os
+      participant UserResourceRepository as urr
+    end box
+    box "backend" #LightBlue
+      participant backend as b
+    end box
+    participant database as db
+
+    u -> fc : /login
+    u <- fc : ログイン画面
+
+    u -> dap : /authenticate with loginId, password
+    dap -> os : getUserResource
+    os -> urr : findOneByLoginId
+    urr -> b : /users/user?loginId=xxx
+    note right: WebClient 
+
+    b -> db
+    b <- db
+
+    urr <- b
+    os <- urr
+    dap <- os
+
+    u <- dap : [ログイン成功] Redirect /portal
+    u -> fc : /portal
+    u <- fc : ポータル画面
+
+プロジェクト構成
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block::
+
+    frontend  # SpringSecurityを用いた認証とバックエンドサービスの呼び出し
+    backend   # Jpaを用いたDBアクセス
+    common    # リソースクラス、例外クラス
+
+
+ソースコード
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#. SpringSecurity関連
+
+    * SecurityConfig
+
+        .. code-block:: java
+
+            @EnableWebSecurity
+            public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+                // 主に全体に対するセキュリティ設定
+                @Override
+                public void configure(WebSecurity web) throws Exception {
+                    web.ignoring().antMatchers("/static/**");
+                }
+
+                // 主にURLごとに異なるセキュリティ設定
+                @Override
+                protected void configure(HttpSecurity http) throws Exception {
+                    http.authorizeRequests()
+                            .antMatchers("/favicon.ico").permitAll()
+                            .antMatchers("/webjars/**").permitAll()
+                            .antMatchers("/static/**").permitAll()
+                            .antMatchers("/timeout").permitAll()
+                            .anyRequest().authenticated()
+                            .and()
+                            .csrf().disable()
+                            .formLogin()
+                            .loginProcessingUrl("/authenticate")
+                            .loginPage("/login")
+                            .successHandler(loginSuccessHandler())
+                            .failureUrl("/login")
+                            .usernameParameter("username")
+                            .passwordParameter("password")
+                            .permitAll()
+                            .and()
+                            .exceptionHandling()
+                            .authenticationEntryPoint(authenticationEntryPoint())
+                            .and()
+                            .logout()
+                            .logoutSuccessUrl("/login")
+                            .permitAll();
+                }
+
+                // 主に認証方法の実装の設定
+                @Override
+                protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+                    auth.authenticationProvider(authenticationProvider());
+                }
+
+                @Bean
+                public AuthenticationProvider authenticationProvider(){
+                    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+                    daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+                    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+                    daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+                    return daoAuthenticationProvider;
+                }
+
+                @Bean
+                public PasswordEncoder passwordEncoder(){
+                    return new BCryptPasswordEncoder();
+                }
+
+                @Bean
+                protected UserDetailsService userDetailsService() {
+                    return new CustomUserDetailsService();
+                }
+            }
+
+#. Jpaを用いたDBアクセス
+
+    * Config
+
+        .. code-block:: java
+
+            @Configuration
+            @EnableTransactionManagement
+            @EnableJpaRepositories(
+                    basePackages = "com.example.backend.domain.repository"
+            )public class JpaConfig {
+
+                @Autowired
+                DataSource dataSource;
+
+                @Bean
+                public PlatformTransactionManager transactionManager() throws Exception{
+                    return new JpaTransactionManager();
+                }
+
+                @Bean
+                public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+
+                    JpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+
+                    Properties properties = new Properties();
+                    properties.setProperty("hibernate.show_sql", "true");
+                    properties.setProperty("hibernate.format_sql", "true");
+
+                    LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+                            = new LocalContainerEntityManagerFactoryBean();
+                    localContainerEntityManagerFactoryBean.setPackagesToScan(
+                            "com.example.backend.domain.model");
+                    localContainerEntityManagerFactoryBean.setJpaProperties(properties);
+                    localContainerEntityManagerFactoryBean.setJpaVendorAdapter(adapter);
+                    localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+
+                    return localContainerEntityManagerFactoryBean;
+
+                }
+            }        
+
+    * Repository
+
+        .. code-block:: java
+
+            public interface UserRepository extends JpaRepository<User, Long> {
+                @Query("SELECT u FROM User u LEFT JOIN FETCH u.credentialsByUserId where u.userId = :userId")
+                User findByUserId(@Param("userId") long userId);
+
+                @Query("SELECT u FROM User u LEFT JOIN FETCH u.credentialsByUserId where u.loginId = :loginId")
+                User findByLoginId(@Param("loginId") String loginId);
+            }
+
+    * Model
+
+        .. code-block:: java
+
+            @Table(name = "usr", schema = "public", catalog = "sample")
+            public class User implements Serializable {
+
+                private long userId;
+                private String firstName;
+                private String familyName;
+                private String loginId;
+                private Boolean isLogin;
+                private Boolean isAdmin;
+                private Integer ver;
+                private Timestamp lastUpdatedAt;
+                private Set<Credential> credentialsByUserId;
+
+                @Id
+                @Column(name = "user_id", nullable = false)
+                public long getUserId() {
+                    return userId;
+                }
+
+                public void setUserId(long userId) {
+                    this.userId = userId;
+                }
+
+            }
+
+
+#. WebClientによるバックエンド呼び出し
+
+    * Repository
+
+        .. code-block:: java
+
+            @Component
+            public class UserResourceRepositoryImpl implements UserResourceRepository {
+
+                @Autowired
+                WebClient webClient;
+
+                @Override
+                public UserResource findOneByLoginId(String loginId) throws BusinessException {
+                    String endpoint = SERVICE_NAME + API_VERSION + "/users/user";
+                    try {
+                        return webClient.get()
+                                .uri(uriBuilder -> uriBuilder.path(endpoint).queryParam("loginId", loginId).build())
+                                .retrieve()
+                                .bodyToMono(UserResource.class)
+                                .block();        
+                    } catch (WebClientResponseException e) {
+                        try {
+                            ErrorResponse errorResponse = objectMapper.readValue(
+                                    e.getResponseBodyAsString(), ErrorResponse.class);
+                            if(errorResponse instanceof BusinessExceptionResponse){
+                                throw ((BusinessExceptionResponse)errorResponse).getBusinessException();
+                            }else {
+                                String errorCode = "SE0002";
+                                throw new SystemException(errorCode, messageSource.getMessage(
+                                        errorCode, new String[]{endpoint}, Locale.getDefault()), e);
+                            }
+                        } catch (IOException e1){
+                            String errorCode = "SE0002";
+                            throw new SystemException(errorCode, messageSource.getMessage(
+                                    errorCode, new String[]{endpoint}, Locale.getDefault()), e);
+                        }
+                    }
+                }
+            }
+

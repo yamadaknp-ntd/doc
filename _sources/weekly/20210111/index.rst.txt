@@ -1,0 +1,210 @@
+.. index:: 活動メモ; 20210111
+
+20210111
+=============================================
+
+.. index:: AWSで実践! 基盤構築・デプロイ自動化; パイプラインの構築
+
+パイプラインの構築（ビルド編）
+---------------------------------------
+
+DockerHub -> ECR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Docker Hubのイメージダウンロードの流量制限が始まったので変更してみた  
+
+#. ECR Public リポジトリ作成
+
+    Amazon ECR Public Galleryから誰でもダウンロード可能
+
+
+    https://gallery.ecr.aws/?searchTerm=mynavi
+
+    .. note::
+
+        ECR Publicの利用料金は、ストレージが50GBまで毎月無料
+
+
+        アノニマスユーザーは毎月500GBまでの帯域が無料で利用可能。AWSアカウントで認証すると毎月5TBまで無料で利用可能。
+
+#. buildspec.yamlの修正
+
+#. ecr-publicのフルアクセス権限を追加
+
+    Publicと言いつつも、CodePipelineからだとAccessPolicyで制御される模様
+
+    .. warning::
+
+        ecrのアクセスポリシーではなく、ecr-publicのポリシーをアタッチ
+
+
+パイプラインの構築（デプロイ編）
+---------------------------------------
+
+.. image:: images/pipeline.png
+
+
+基盤構築
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+自動化のためのCloudFormationテンプレート作成
+
+* テンプレートファイルの分割方法とか
+* 既存のリソース（VPCとかはすでにあるもの）を使う場合の書き方
+
+#. 基盤イメージ
+
+.. image:: images/template.png
+
+
+#. テンプレート構成
+
+.. code-block::
+
+    templates
+      - vpc
+          - vpc-launch.sh       # 起動スクリプト
+          - vpc-parameters.json # テンプレートで使用するパラメータの設定
+          - vpc.yaml            # CFN Templateファイル
+      - alb
+        - alb-launch.sh
+        - alb-parameters.json
+        - alb.yaml
+      - ecs
+        - ecs-launch.sh
+        - ecs-parameters.json
+        - ecs.yaml
+
+#. vpcのソース紹介
+
+* vpc.yaml
+
+    .. code-block:: yaml
+
+        AWSTemplateFormatVersion: '2010-09-09'
+
+        Parameters:
+        VPCId:
+            Description: Target VPC Id
+            Type: String
+        VPCName:
+        VPCCiderBlock:
+        PublicSubnet1CiderBlock:
+        PublicSubnet1Name:
+        PublicSubnet2CiderBlock:
+        PublicSubnet2Name:
+        PrivateSubnet1CiderBlock:
+        PrivateSubnet1Name:
+        PrivateSubnet2CiderBlock:
+        PrivateSubnet2Name:
+
+        Resources:
+        VPC:
+            Type: AWS::EC2::VPC
+            DeletionPolicy: Retain
+            UpdateReplacePolicy: Retain
+            Properties:
+            CidrBlock: !Sub ${VPCCiderBlock}
+            InstanceTenancy: default
+            EnableDnsSupport: true
+            EnableDnsHostnames: true
+            Tags:
+                - Key: Name
+                Value: !Sub ${VPCName}
+        PublicSubnet1:
+        PublicSubnet2:
+        PrivateSubnet1:
+        PrivateSubnet2:
+
+        Outputs:
+        VPC:
+        Description: VPC ID
+        Value: !Ref VPC
+        Export:
+            Name: !Sub ${VPCName}-VPCID
+        PublicSubnet1:
+        PublicSubnet1Arn:
+        PublicSubnet2:
+        PublicSubnet2Arn:
+        PrivateSubnet1:
+        PrivateSubnet1Arn:
+        PrivateSubnet2:
+        PrivateSubnet1Arn:
+
+
+* vpc-parameters.json
+
+    .. code-block:: yaml
+
+        [
+            "VPCName=ma-personal-vpc",
+            "VPCCiderBlock=10.2.0.0/16",
+            "PublicSubnet1Name=MA-yamada-vpc-public-subnet-1",
+            "PublicSubnet1CiderBlock=10.2.12.0/28",
+            "PublicSubnet2Name=MA-yamada-vpc-public-subnet-2",
+            "PublicSubnet2CiderBlock=10.2.12.16/28",
+            "PrivateSubnet1Name=MA-yamada-vpc-private-subnet-1",
+            "PrivateSubnet1CiderBlock=10.2.12.32/28",
+            "PrivateSubnet2Name=MA-yamada-vpc-private-subnet-2",
+            "PrivateSubnet2CiderBlock=10.2.12.48/28"
+        ]
+
+* vpc-launch.sh
+
+    .. code-block:: sh
+
+        #!/usr/bin/env bash
+
+        stack_name="MA-yamada-mynavi-sample-vpc"
+        template_path="$(dirname $0)/vpc.yaml"
+        parameters_file=$(dirname $0)/vpc-parameters.json
+
+        aws cloudformation deploy --stack-name ${stack_name} --no-execute-changeset --template-file ${template_path} --parameter-overrides "file://${parameters_file}" --capabilities CAPABILITY_IAM
+
+
+アプリケーション
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+塾長のサンプルアプリを拝借
+https://github.com/debugroom/mynavi-sample-continuous-integration/tree/develop
+
+
+buildspec.yml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    .. code-block:: sh
+
+        version: 0.2
+        env:
+          parameter-store:
+            # SONAR_HOST_URL: "SONAR_HOST_URL"
+            # SONAR_LOGIN: "SONAR_LOGIN_BACKEND"
+            # DOCKER_USER: "MA_YAMADA_DOCKER_USER"
+            # DOCKER_PASSWORD: "MA_YAMADA_DOCKER_PASSWORD"
+            DOCKER_REPO : "MA_YAMADA_DOCKER_REPO"
+            IMAGE_REPO_NAME: "MA_YAMADA_BACKEND_IMAGE_REPO_NAME"
+            IMAGE_NAME: "MA_YAMADA_BACKEND_IMAGE_NAME"
+            IMAGE_TAG: "MA_YAMADA_BACKEND_IMAGE_TAG_STAGING"
+        phases:
+        # install:
+        #   runtime-versions:    # CodeBuildの Ubuntuランタイム 3.0 ~ 5.0 だと dockerランタイムサポートしてない
+        #     docker: 18         # インストールしなくてもdocker標準インストールされてる模様
+          pre_build:
+            commands:
+              - echo Logging in to Docker Hub...
+              - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $DOCKER_REPO
+          build:
+            commands:
+              - echo Build started on `date`
+              - echo Building the Docker image...
+              - docker build -t $IMAGE_NAME:$IMAGE_TAG backend/build/production
+              - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:$IMAGE_TAG
+          post_build:
+            commands:
+              - echo Build completed on `date`
+              - echo Pushing the Docker image...
+              - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+              - printf '[{"name":"mynavi-sample-continuous-delivery-backend-staging","imageUri":"%s"}]' $IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+        artifacts:
+          files:
+            - imagedefinitions.json
