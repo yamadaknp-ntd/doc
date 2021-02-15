@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="ja" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>技統本塾活動メモ &mdash; 技統本塾活動メモ 0.1-SNAPSHOT ドキュメント</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script src="_static/translations.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -51,7 +53,7 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> 技統本塾活動メモ
+            <a href="#" class="icon icon-home"> 技統本塾活動メモ
           
 
           
@@ -89,6 +91,13 @@
 <li class="toctree-l1"><a class="reference internal" href="weekly/20201214/index.html">3. 20201214</a></li>
 <li class="toctree-l1"><a class="reference internal" href="weekly/20210111/index.html">4. 20210111</a></li>
 <li class="toctree-l1"><a class="reference internal" href="weekly/20210118/index.html">5. 20210118</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html">1. マイクロサービスでの認証認可</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#id11">2. 以下メモ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#authentication-and-authorization-of-end-user-in-microservice-architecture">3. Authentication and Authorization of End User in Microservice Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#id12">4. テーマ・ゴール検討</a></li>
 </ul>
 
             
@@ -129,6 +138,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -140,7 +151,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -183,6 +194,29 @@
 </li>
 </ul>
 </div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html">1. マイクロサービスでの認証認可</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#id2">1.1. マイクロサービスでの認証認可は2パターン</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#id11">2. 以下メモ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#authentication-and-authorization-of-end-user-in-microservice-architecture">3. Authentication and Authorization of End User in Microservice Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#introduction">3.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#auth-challenges-in-microservice">3.2. Auth Challenges in Microservice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#using-distribute-session">3.3. Using Distribute Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#using-sso-server">3.4. Using SSO Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#using-json-web-token">3.5. Using JSON Web Token</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#using-jwt-api-gateway">3.6. Using JWT+API Gateway</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspection/index.html#id12">4. テーマ・ゴール検討</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inspection/index.html#id13">4.1. 検討事項</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="このヘッドラインへのパーマリンク">¶</a></h1>
@@ -198,35 +232,28 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="weekly/20201130/index.html" class="btn btn-neutral float-right" title="1. 20201130" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+        <a href="weekly/20201130/index.html" class="btn btn-neutral float-right" title="1. 20201130" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 著作権 2020, yamadaknp
+        &#169; Copyright 2020, yamadaknp.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

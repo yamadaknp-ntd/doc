@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>1. マイクロサービスでの認証認可 &mdash; 技統本塾活動メモ 0.1-SNAPSHOT ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="prev" title="5. 20210118" href="../weekly/20210118/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 技統本塾活動メモ
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../weekly/20201130/index.html">1. 20201130</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weekly/20201207/index.html">2. 20201207</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weekly/20201214/index.html">3. 20201214</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weekly/20210111/index.html">4. 20210111</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weekly/20210118/index.html">5. 20210118</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. マイクロサービスでの認証認可</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">1.1. マイクロサービスでの認証認可は2パターン</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">1.1.1. ユーザ - サービス間 （参考資料）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">1.1.2. サービス - サービス間（参考資料）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">1.1.3. DHARMA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id11">2. 以下メモ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#authentication-and-authorization-of-end-user-in-microservice-architecture">3. Authentication and Authorization of End User in Microservice Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">3.1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auth-in-monolithic-application">3.1.1. Auth in Monolithic Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributed-session-management">3.1.2. Distributed Session Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#token-based-auth">3.1.3. Token-Based Auth</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#auth-challenges-in-microservice">3.2. Auth Challenges in Microservice</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-microservice-architecture">3.2.1. What is Microservice Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auth-service-in-microservice">3.2.2. Auth Service in Microservice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-do-we-want">3.2.3. What do We Want</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-distribute-session">3.3. Using Distribute Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-sso-server">3.4. Using SSO Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-json-web-token">3.5. Using JSON Web Token</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-jwt-api-gateway">3.6. Using JWT+API Gateway</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id12">4. テーマ・ゴール検討</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id13">4.1. 検討事項</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">4.1.1. そもそも認証認可って</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">4.1.2. 認証認可で何を実現したいの？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">4.1.3. 調査軸（ユースケース）</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id17">4.1.3.1. 個人的に課題だと思っていること</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">4.1.3.2. パターン整理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">4.1.3.3. やりたいこと</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">技統本塾活動メモ</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">1. </span>マイクロサービスでの認証認可</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/inspection/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="index-0">
+<span id="id1"></span><h1><span class="section-number">1. </span>マイクロサービスでの認証認可<a class="headerlink" href="#index-0" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id2">
+<h2><span class="section-number">1.1. </span>マイクロサービスでの認証認可は2パターン<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><img alt="../_images/SS1.png" src="../_images/SS1.png" />
+<ol class="arabic">
+<li><p>ユーザ - サービス間</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">OAuth2.0 / OIDCをイメージ</div>
+<div class="line">モノリスだろうがあまり変わらない領域</div>
+</div>
+</div></blockquote>
+</li>
+<li><p>サービス - サービス間</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">あるサービスが別のサービスを呼ぶときどうすべきか？</div>
+<div class="line">API1(ServiceA)がAPI2(ServiceB)を呼び出すときにIDをどう渡すのか？</div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+<div class="section" id="id4">
+<h3><span class="section-number">1.1.1. </span>ユーザ - サービス間 （<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1742-6596/910/1/012060">参考資料</a>）<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p>セッションストア方式</p>
+<blockquote>
+<div><p>モノリス従来方式</p>
+<img alt="../_images/AuthN-DS.png" src="../_images/AuthN-DS.png" />
+</div></blockquote>
+</li>
+<li><p>トークン方式</p>
+<blockquote>
+<div><p>OAuth2.0 / OIDC / SSO</p>
+<img alt="../_images/AuthN-TK.png" src="../_images/AuthN-TK.png" />
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">1.1.2. </span>サービス - サービス間（<a class="reference external" href="https://www.scottbrady91.com/OAuth/Delegation-Patterns-for-OAuth-20">参考資料</a>）<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p>トークンを使い回す方式</p>
+<blockquote>
+<div><img alt="../_images/SS2.png" src="../_images/SS2.png" />
+<p>API1(ServiceA)がClientになりすましている状態</p>
+<div class="line-block">
+<div class="line">API2(ServiceB)からは API1(ServiceA)を認識することができない</div>
+<div class="line">audienceやscopeの設計が複雑になってしまう。</div>
+</div>
+<p><a class="reference external" href="https://dev.classmethod.jp/articles/microservice-auth-aws-dev-day-tokyo-2018/#toc-5">実装例[Prismatix]</a></p>
+</div></blockquote>
+</li>
+<li><p>API1(ServiceA)がクライアントとなってトークンを発行する</p>
+<blockquote>
+<div><img alt="../_images/SS3.png" src="../_images/SS3.png" />
+<p>API2(ServiceB)からはユーザを認識できなくなる</p>
+<p>以下の役割に変わる</p>
+<p>Client(リソースオーナー) -&gt; API1(ServiceA)(クラアント) -&gt; API2(ServiceB)(リソースサーバ)</p>
+<p><a class="reference external" href="https://dev.classmethod.jp/articles/microservice-auth-aws-dev-day-tokyo-2018/#toc-5">実装例[Prismatix]</a></p>
+</div></blockquote>
+</li>
+<li><p>トークン交換</p>
+<blockquote>
+<div><img alt="../_images/SS4.png" src="../_images/SS4.png" />
+<p>外部用のトークンと内部用のトークンを紐付ける</p>
+<p>OAuth2.0 Token Exchange</p>
+<p><a class="reference external" href="https://speakerdeck.com/pospome/maikurosabisuniokerunei-bu-tong-xin-falseren-zheng-nituite">実装例[メルカリ]</a></p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">1.1.3. </span><a class="reference external" href="https://docs.broadcom.com/doc/securing-microservice-apis-sustainable-and-scalable-access-control">DHARMA</a><a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><p><a class="reference external" href="https://yunkt.hatenablog.com/entry/2019/11/02/205521">引用元</a></p>
+<img alt="../_images/DAHRMA1.jpg" src="../_images/DAHRMA1.jpg" />
+<div class="line-block">
+<div class="line">DHARMAでは、サービスの集合であるドメインを定義します。</div>
+<div class="line">このドメイン内は信頼でき、別ドメインからのアクセスは、信頼度が低いものとみなします。</div>
+<div class="line">ドメイン内のサービスに見せるAPIエンドポイントを、Interior endpoint、</div>
+<div class="line">ドメインの外からのアクセスを受けるエンドポイントをboundary endpointと呼び、</div>
+<div class="line">それぞれで認証方式を変えます。</div>
+</div>
+<img alt="../_images/DAHRMA2.jpg" src="../_images/DAHRMA2.jpg" />
+<div class="line-block">
+<div class="line">システムを管理する組織が手を出せないところからのアクセス（最も外側の階層のBoundary endpoint）では、OAuth 2.0やOpenID Connectなどが良いでしょう。</div>
+<div class="line">API gatewayを用意することになります。これは普通のマイクロサービスアーキテクチャの開発と同じです。</div>
+<div class="line">その内側の階層のBoundary endpointでは、比較的組織内でハンドリングできるため、証明書付きの、JWTなどのトークンを使えば良いかもしれません。</div>
+<div class="line">内部の階層は、効率重視にすればよいです。ただ、トークンを使うなど最低限のセキュリティは欲しいです。</div>
+<div class="line">それは、軽量なリバプロを用意すればよいでしょう。 一応、auditdなどで監査ログも残しておくのが良いと思います。</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h1><span class="section-number">2. </span>以下メモ<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h1>
+</div>
+<div class="section" id="authentication-and-authorization-of-end-user-in-microservice-architecture">
+<h1><span class="section-number">3. </span>Authentication and Authorization of End User in Microservice Architecture<a class="headerlink" href="#authentication-and-authorization-of-end-user-in-microservice-architecture" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">3.1. </span>Introduction<a class="headerlink" href="#introduction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p>認証(Authentication, AuthN)</p>
+<blockquote>
+<div><p>通信の相手が誰（何）であるかを確認すること</p>
+</div></blockquote>
+</li>
+<li><p>認可(Authorization, AuthZ)</p>
+<blockquote>
+<div><p>とある特定の条件に対して、リソースアクセスの権限を与えること</p>
+</div></blockquote>
+</li>
+</ul>
+<dl class="simple">
+<dt>認証認可の要件</dt><dd><ul class="simple">
+<li><p>ステートレスなプロトコルでのユーザログイン状態の管理</p></li>
+<li><dl class="simple">
+<dt>一貫したログイン・ログアウト</dt><dd><p>内部でサービスが分かれていても、ログイン・ログアウト状態を一貫させたい</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>アカウントの権限管理</dt><dd><p>アカウントによって、取得、操作できるリソースが異なる</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="auth-in-monolithic-application">
+<h3><span class="section-number">3.1.1. </span>Auth in Monolithic Application<a class="headerlink" href="#auth-in-monolithic-application" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>通常、サーバーがセッション管理を行うことで実現する。</p>
+<ul>
+<li><p>利点</p>
+<blockquote>
+<div><p>実装がシンプル・簡単。</p>
+</div></blockquote>
+</li>
+<li><p>課題</p>
+<blockquote>
+<div><p>セッションをどこかに保存する必要がある。
+認証機能と他の機能の結合度が高く、スケーラビリティと柔軟性が低下
+トラフィックが増大した際にノードを増やした場合、複数ノードでのセッション共有は難しい。
+Cookieを使用する場合の、セキュリティ対策が必要。</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="distributed-session-management">
+<h3><span class="section-number">3.1.2. </span>Distributed Session Management<a class="headerlink" href="#distributed-session-management" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>分散セッション管理はいくつかのソリューションが提案されている
+いずれの場合でも、設計が複雑になり保守が難しくなる。</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Sticky Session</dt><dd><p>リクエストが単一のサーバーに送信されることを保証する方法</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Session Replication</dt><dd><p>各サーバがセッションデータを保存し共有する方法</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Centirized Management</dt><dd><p>セッション管理用のサーバを構築して、すべてのサービスがこのサーバを呼び出す方式</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="token-based-auth">
+<h3><span class="section-number">3.1.3. </span>Token-Based Auth<a class="headerlink" href="#token-based-auth" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>セッション管理とは異なる方法。
+ユーザ情報の共有はトークンで完結できる。
+ステートレスなので、スケーラビリティが高い
+ブラウザモバイルなど様々なクライアントに適用できる</p>
+</div>
+</div>
+<div class="section" id="auth-challenges-in-microservice">
+<h2><span class="section-number">3.2. </span>Auth Challenges in Microservice<a class="headerlink" href="#auth-challenges-in-microservice" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="what-is-microservice-architecture">
+<h3><span class="section-number">3.2.1. </span>What is Microservice Architecture<a class="headerlink" href="#what-is-microservice-architecture" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>割愛</p>
+</div>
+<div class="section" id="auth-service-in-microservice">
+<h3><span class="section-number">3.2.2. </span>Auth Service in Microservice<a class="headerlink" href="#auth-service-in-microservice" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>マイクロサービスでの認証・認可の実現方法で簡単なのはモノリシックを模倣する方法。
+各サービスごとに認証情報を保持して、ユーザ認証機能を実装する。もしくはユーザ情報は共有。
+サービスごとに認証機能を作る必要性がある。ユーザ情報を共有すると単一障害点になる。</p>
+<p>これを改善して、認証サービスを配置するとよい。</p>
+</div>
+<div class="section" id="what-do-we-want">
+<h3><span class="section-number">3.2.3. </span>What do We Want<a class="headerlink" href="#what-do-we-want" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li><p>セキュリティ</p></li>
+<li><p>ステートレス</p></li>
+<li><p>SPOFの回避</p></li>
+<li><p>ボトルネックにならない</p></li>
+<li><p>ログアウト機能</p></li>
+<li><p>マイクロサービスとの統合</p></li>
+<li><p>実装をシンプルに</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-distribute-session">
+<h2><span class="section-number">3.3. </span>Using Distribute Session<a class="headerlink" href="#using-distribute-session" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic simple">
+<li><p>セッションIDがないサービスリクエストは、認証サービスへリダイレクト</p></li>
+<li><p>認証サービスでセッションを生成してセッションストアに保存。セッションIDを割り振り、各サービスへ戻す</p></li>
+<li><p>セッションIDをつけてサービスにアクセス</p></li>
+<li><p>各サービスがセッションIDを使用してセッションストアにアクセスしてユーザ情報を取得する</p></li>
+</ol>
+</div>
+<div class="section" id="using-sso-server">
+<h2><span class="section-number">3.4. </span>Using SSO Server<a class="headerlink" href="#using-sso-server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>SSOサーバを用意するパターン
+トークンの検証時にSSOサーバにアクセスする必要があるのでSPOF、ボトルネックになる。</p>
+<ol class="arabic simple">
+<li></li>
+</ol>
+</div>
+<div class="section" id="using-json-web-token">
+<h2><span class="section-number">3.5. </span>Using JSON Web Token<a class="headerlink" href="#using-json-web-token" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</div>
+<div class="section" id="using-jwt-api-gateway">
+<h2><span class="section-number">3.6. </span>Using JWT+API Gateway<a class="headerlink" href="#using-jwt-api-gateway" title="このヘッドラインへのパーマリンク">¶</a></h2>
+</div>
+</div>
+<div class="section" id="id12">
+<h1><span class="section-number">4. </span>テーマ・ゴール検討<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id13">
+<h2><span class="section-number">4.1. </span>検討事項<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>認証</p></li>
+<li><p>認可</p></li>
+</ul>
+<div class="section" id="id14">
+<h3><span class="section-number">4.1.1. </span>そもそも認証認可って<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>認証(Authentication, AuthN)</dt><dd><p>通信の相手が誰（何）であるかを確認すること</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>認可(Authorization, AuthZ)</dt><dd><p>とある特定の条件に対して、リソースアクセスの権限を与えること</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>OAuth = 認可連携 ≠ 認可
+OpenID・SAML = 認証連携 ≠ 認証</p>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">4.1.2. </span>認証認可で何を実現したいの？<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+</div>
+<div class="section" id="id16">
+<h3><span class="section-number">4.1.3. </span>調査軸（ユースケース）<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>クライアントが増える → 標準化された方法（OAuth・OIDC）</p>
+<p><a href="#id20"><span class="problematic" id="id21">|スケール|不要|要|</span></a>
+<a href="#id22"><span class="problematic" id="id23">|:--|</span></a>:--<a href="#id24"><span class="problematic" id="id25">|:--|</span></a>
+<a href="#id26"><span class="problematic" id="id27">|クライアント|増えない|増える（トークン使う）|</span></a>
+<a href="#id28"><span class="problematic" id="id29">|サービス数|増えない|増える|</span></a>
+<a href="#id30"><span class="problematic" id="id31">|ネットワーク|許容|ゼロトラスト|</span></a></p>
+<div class="section" id="id17">
+<h4><span class="section-number">4.1.3.1. </span>個人的に課題だと思っていること<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<blockquote>
+<div><blockquote>
+<div><div class="line-block">
+<div class="line">A |</div>
+<div class="line">P | -&gt; A</div>
+</div>
+</div></blockquote>
+<dl>
+<dt>CL  -&gt; | I |      </dt><dd><div class="line-block">
+<div class="line">G | -----&gt; B</div>
+<div class="line">W |</div>
+</div>
+</dd>
+</dl>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>CL -&gt; APIGW -&gt; A -&gt; B</dt><dd><p>CL が A B の 認可を持つトークンの場合許可
+CL が A の 認可を持つトークンの場合許可</p>
+</dd>
+</dl>
+</li>
+<li></li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h4><span class="section-number">4.1.3.2. </span>パターン整理<a class="headerlink" href="#id18" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ol class="arabic simple">
+<li><p>ユーザ - サービス間</p>
+<ul class="simple">
+<li></li>
+</ul>
+</li>
+</ol>
+<ol class="arabic simple">
+<li><p>サービス - サービス間</p></li>
+</ol>
+</div>
+<div class="section" id="id19">
+<h4><span class="section-number">4.1.3.3. </span>やりたいこと<a class="headerlink" href="#id19" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><dl>
+<dt>整理</dt><dd><p>そもそも認証認可をなぜ一元化するか。
+・ユーザ利便性（パスワード一元化・プロファイル共有・シングルサインオン・ユーザー登録作業を省略で）
+・システム管理・開発の負担軽減とリスクを外部に転嫁
+一方で異なる企業・組織のサービス間でID連携するためには、標準化が必要ということでOpenIDConnect等の認証連携の仕組みができた。
+OIDCでは、認証と認可サーバを兼ねることができる</p>
+<p>では、マイクロサービスアーキテクチャを採用する場合に認証認可がサービス化されるのは必然な流れ
+認証認可連携としてOpenIDConnect前提で考えたときに、マイクロサービス化したシステム内部で認証認可をどう連携するかを考えたい。</p>
+<ol class="arabic">
+<li><dl>
+<dt>サービス呼び出しパターン</dt><dd><ol class="loweralpha simple">
+<li><p>クライアント -&gt; サービスA</p></li>
+</ol>
+<p>b. クライアント -&gt; サービスB -&gt; サービスA
+a.のときはモノリスだろうが関係なく同じ考え方でよい
+b.のときにどうやって認証情報を渡す？</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>トークン検証パターン</dt><dd><ol class="loweralpha simple">
+<li><p>クライアント -&gt; ○サービスA -&gt; ○サービスB</p></li>
+<li><p>クライアント -&gt; ○プロキシ -&gt; サービスA -&gt; サービスB</p></li>
+<li><p>クライアント -&gt; ○プロキシ -&gt; サービスA -&gt; ○?プロキシ -&gt; サービスB</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>トークンパターン</dt><dd><ol class="loweralpha simple">
+<li><p>IDtoken(内部サービス)</p></li>
+<li><p>Access Token(外部サービス)</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+<p>①認証パターンの整理
+結局、サービス間をどこまで信頼するかで連携パターンが決まってくる。
+仮説としては、だいたいの場合、内部のサービス間は</p>
+<p>連携先サービス</p>
+<p>(2-a) モノリスと変わらない
+(1-b) クライアント -&gt; サービスBは(1-a)と一緒</p>
+<blockquote>
+<div><dl class="simple">
+<dt>サービスB -&gt; サービスAは</dt><dd><p>トークンをそのまま渡す場合（クライアント -&gt; サービスAを偽造する）
+サービスBが新しいクライアントとなる（Token Exchangeパターン？）</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>・閉域網内だったら別によくない？
+・</p>
+<dl>
+<dt>②認可パターンの整理</dt><dd><ol class="arabic">
+<li><dl>
+<dt>認可スコープのパターン</dt><dd><p>クライアント -&gt; サービスA -&gt; サービスB
+a. スコープ：サービスA, サービスB
+b. 外部スコープ：サービスA, 内部スコープ：サービスA, サービスB</p>
+<blockquote>
+<div><p>外部スコープ → ユースケースベース
+内部スコープ → リソースベース</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+<p>③DHARMAの実装 (Domain Hierarchy Access Regulation for Microservice Architecture)</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../weekly/20210118/index.html" class="btn btn-neutral float-left" title="5. 20210118" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, yamadaknp.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

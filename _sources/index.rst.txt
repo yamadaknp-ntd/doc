@@ -15,6 +15,15 @@
    weekly/**
 
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   :numbered:
+   :glob:
+
+   inspection/**
+
+
 Indices and tables
 ==================
 
